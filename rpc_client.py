@@ -1,7 +1,7 @@
 import xmlrpc.client
 import os
 
-s = xmlrpc.client.ServerProxy('http://127.0.0.1:8000', allow_none=True)
+s = xmlrpc.client.ServerProxy('http://26.95.204.95:8000', allow_none=True)
 
 def clearScreen():
     os.system("cls")
@@ -20,7 +20,7 @@ def inputMenu():
     print("======> Input Aktivitas\n")
     data = input("Input nama aktivitas: ")
     s.input_activity(data)
-    print("Data berhasil dimasukkan")
+    print("Data berhasil dimasukkan\n")
 
 def logMenu():
     clearScreen()
@@ -34,6 +34,7 @@ def logMenu():
         clearScreen()
         print(menuHeader)
         print(s.get_log())
+        print("\n")
 
     if menu == "2":
         clearScreen()
@@ -47,6 +48,7 @@ def logMenu():
         print(menuHeader)
         print("\nMenampilkan log dari tanggal & waktu inputan hingga saat ini...\n")
         print(s.get_log(dataDate,dataTime))
+        print("\n")
 
 while True:
     menu = mainMenu()
