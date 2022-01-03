@@ -35,7 +35,7 @@ class RequestHandler(SimpleXMLRPCRequestHandler):
 
 with SimpleXMLRPCServer(("127.0.0.1", 8000), requestHandler=RequestHandler, allow_none=True) as server:
     def inputActivity(user, data):
-        pingOutput = os.popen("ping -n 2 {}".format(data["ip_address"])).read()
+        pingOutput = os.popen("ping -n 2 google.com").read()
         pings = regexAvgPing.findall(pingOutput)
         
         idx = 1

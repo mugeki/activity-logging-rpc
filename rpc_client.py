@@ -54,7 +54,7 @@ def logMenu(user):
 
         clearScreen()
         print(menuHeader)
-        print("\nMenampilkan log dari tanggal & waktu inputan hingga saat ini...\n")
+        print(f"\nMenampilkan log dari {dataDate} {dataTime} hingga saat ini...\n")
         print(s.get_log(user, ip_address, dataDate, dataTime))
         print("\n")
 
