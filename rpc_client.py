@@ -1,7 +1,9 @@
 import xmlrpc.client
 import os
+import socket
 
-s = xmlrpc.client.ServerProxy('http://26.95.204.95:8000', allow_none=True)
+s = xmlrpc.client.ServerProxy("http://127.0.0.1:8000", allow_none=True)
+ip_address = socket.gethostbyname(socket.gethostname())
 
 def clearScreen():
     os.system("cls")
@@ -12,17 +14,23 @@ def mainMenu():
     print("Opsi:")
     print("1. Input Aktivitas")
     print("2. Cek Log")
-    print("0. Exit")
+    print("0. Logout")
     return input("Input nomor menu: ")
 
-def inputMenu():
+def loginMenu():
+    clearScreen()
+    print("======> Login\n")
+    print("Input 0 to exit\n")
+    return input("Input username: ")
+
+def inputMenu(user):
     clearScreen()
     print("======> Input Aktivitas\n")
-    data = input("Input nama aktivitas: ")
-    s.input_activity(data)
+    activity = input("Input nama aktivitas: ")
+    s.input_activity(user, {"activity": activity, "ip_address": ip_address})
     print("Data berhasil dimasukkan\n")
 
-def logMenu():
+def logMenu(user):
     clearScreen()
     menuHeader = "======> Cek Log\n"
     print(menuHeader)
@@ -33,7 +41,7 @@ def logMenu():
     if menu == "1":
         clearScreen()
         print(menuHeader)
-        print(s.get_log())
+        print(s.get_log(user, ip_address))
         print("\n")
 
     if menu == "2":
@@ -47,22 +55,32 @@ def logMenu():
         clearScreen()
         print(menuHeader)
         print("\nMenampilkan log dari tanggal & waktu inputan hingga saat ini...\n")
-        print(s.get_log(dataDate,dataTime))
+        print(s.get_log(user, ip_address, dataDate, dataTime))
         print("\n")
 
 while True:
-    menu = mainMenu()
+    user = loginMenu()
 
-    if menu == "1":
-        inputMenu()
-        input("Tekan enter untuk kembali ke menu utama")
-        continue
-
-    if menu == "2":
-        logMenu()
-        input("Tekan enter untuk kembali ke menu utama")
-        continue
-
-    if menu == "0":
+    if user == "0": 
         clearScreen()
         break
+    
+    s.input_activity(user, {"activity": "login", "ip_address": ip_address})
+
+    while True:
+        menu = mainMenu()
+
+        if menu == "1":
+            inputMenu(user)
+            input("Tekan enter untuk kembali ke menu utama")
+            continue
+
+        if menu == "2":
+            logMenu(user)
+            input("Tekan enter untuk kembali ke menu utama")
+            continue
+
+        if menu == "0":
+            clearScreen()
+            s.input_activity(user, {"activity": "logout", "ip_address": ip_address})
+            break
