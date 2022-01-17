@@ -2,6 +2,7 @@ import xmlrpc.client
 import os
 import socket
 
+# Buat stup proxy client
 s = xmlrpc.client.ServerProxy("http://127.0.0.1:8000", allow_none=True)
 ip_address = socket.gethostbyname(socket.gethostname())
 
@@ -58,6 +59,7 @@ def logMenu(user):
         print(s.get_log(user, ip_address, dataDate, dataTime))
         print("\n")
 
+# Infinite loop untuk menjalankan client sampai user input menu Exit
 while True:
     user = loginMenu()
 

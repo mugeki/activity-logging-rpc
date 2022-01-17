@@ -15,6 +15,7 @@ import re
 # client, monitoring jaringan, dan lain sebagainya. Selain itu, client dapat melihat log
 # aktivitas untuk hari, tanggal, dan jam yang diinginkan.
 
+# Membuat database dummy
 DATABASE = {
     "elang":{
         "1": {
@@ -28,12 +29,16 @@ DATABASE = {
     }
 }
 
+# Definisi regex untuk ping
 regexAvgPing = re.compile(r" = (\d*ms)")
 
+# Batasi path hanya menjadi /RPC2
 class RequestHandler(SimpleXMLRPCRequestHandler):
     rpc_paths = ('/RPC2')
 
+# Membuat server
 with SimpleXMLRPCServer(("127.0.0.1", 8000), requestHandler=RequestHandler, allow_none=True) as server:
+    # Membuat fungsi untuk melakukan input aktivitas user
     def inputActivity(user, data):
         pingOutput = os.popen("ping -n 2 google.com").read()
         pings = regexAvgPing.findall(pingOutput)
@@ -55,10 +60,11 @@ with SimpleXMLRPCServer(("127.0.0.1", 8000), requestHandler=RequestHandler, allo
         }
         return
 
+    # Membuat fungsi untuk mendapatkan log user
     def getLog(user="", client_ip="127.0.0.1", dataDate=None, dataTime=None, ):
         if len(DATABASE) == 0:
             return "LOG KOSONG..."
-            
+
         response = ""
         if dataDate is None and dataTime is None:
             for key in reversed(DATABASE[user]):
@@ -70,6 +76,7 @@ with SimpleXMLRPCServer(("127.0.0.1", 8000), requestHandler=RequestHandler, allo
                     "Max Ping: {}, ".format(DATABASE[user][key]["max_ping"]) +
                     "Average Ping: {}\n".format(DATABASE[user][key]["avg_ping"])
                 )
+        # Handle ketika user tidak mengintputkan waktu
         else:
             targetTime = None
             date = dataDate.split("-")
@@ -91,10 +98,11 @@ with SimpleXMLRPCServer(("127.0.0.1", 8000), requestHandler=RequestHandler, allo
                     
         if response == "": response = "LOG KOSONG..."
         return response
-
+    
+    # Register fungsi ke server rpc
     server.register_function(inputActivity, "input_activity")
     server.register_function(getLog, "get_log")
 
+    # Run server
     print("Server berjalan...")
-    
     server.serve_forever()
